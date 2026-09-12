@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ipsita Parida — Technical Product Manager</title>
+<meta name="description" content="Ipsita Parida — Technical Product Manager building AI into regulated, high-scale enterprise platforms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10151F;
+    --ink-soft:#1B2230;
+    --paper:#F7F5F0;
+    --paper-dim:#EFEBE2;
+    --brass:#B8873D;
+    --brass-bright:#D6A455;
+    --teal:#1F6F63;
+    --slate:#5B6472;
+    --line:#DAD3C3;
+    --line-on-ink:rgba(247,245,240,0.14);
+    --serif:'Fraunces', Georgia, serif;
+    --sans:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:'IBM Plex Mono', 'SFMono-Regular', monospace;
+    --max:920px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brass);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--teal); outline-offset:3px;}
+
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px;}
+
+  /* ---------- NAV ---------- */
+  header.site-nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(247,245,240,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--max); margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-name{font-family:var(--serif); font-size:18px; font-weight:600; letter-spacing:0.01em;}
+  .nav-links{display:flex; gap:28px; list-style:none; margin:0; padding:0;}
+  .nav-links a{color:var(--ink); text-decoration:none; font-size:14.5px; font-weight:500;}
+  .nav-links a:hover{color:var(--brass);}
+  .nav-toggle{display:none;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--ink);
+    color:var(--paper);
+    padding:88px 0 64px;
+  }
+  .hero .wrap{display:flex; flex-direction:column; gap:40px;}
+  .eyebrow-loc{
+    font-size:14px; color:#B7BEC9; font-family:var(--sans); font-weight:500;
+    display:flex; gap:18px; flex-wrap:wrap; align-items:center;
+  }
+  .eyebrow-loc svg{width:14px; height:14px; vertical-align:-2px; margin-right:5px; opacity:.85;}
+  h1.hero-headline{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(34px, 5vw, 54px);
+    line-height:1.12;
+    margin:0;
+    max-width:14ch;
+    color:#FBFAF7;
+  }
+  .hero-sub{
+    font-size:18px;
+    color:#D7DBE1;
+    max-width:56ch;
+    margin:0;
+  }
+  .hero-sub strong{color:var(--paper); font-weight:600;}
+
+  .metrics-row{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:0;
+    margin-top:12px;
+    border-top:1px solid var(--line-on-ink);
+  }
+  .metric{
+    padding:22px 18px 4px 0;
+    border-right:1px solid var(--line-on-ink);
+  }
+  .metric:last-child{border-right:none;}
+  .metric-num{
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:clamp(22px, 3vw, 30px);
+    color:var(--brass-bright);
+    display:block;
+  }
+  .metric-num::after{content:'%';font-size:0.6em; margin-left:1px;}
+  .metric-label{
+    font-size:12.5px;
+    color:#AEB5C0;
+    margin-top:6px;
+    display:block;
+    line-height:1.35;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:64px 0;}
+  section.alt{background:var(--paper-dim);}
+  h2.section-title{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:28px;
+    margin:0 0 28px;
+    color:var(--ink);
+  }
+  .summary-text{
+    font-size:17.5px;
+    max-width:70ch;
+    color:#2B3240;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-group{margin-bottom:22px;}
+  .skill-group h3{
+    font-family:var(--sans);
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--teal);
+    margin:0 0 10px;
+  }
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    font-size:13.5px;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:#2B3240;
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .role-block{
+    position:relative;
+    padding-left:26px;
+    border-left:2px solid var(--line);
+    margin-bottom:46px;
+  }
+  .role-block:last-child{margin-bottom:0;}
+  .role-block::before{
+    content:'';
+    position:absolute; left:-7px; top:4px;
+    width:12px; height:12px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--teal);
+  }
+  .role-head{
+    display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:8px;
+    margin-bottom:2px;
+  }
+  .role-title{font-family:var(--serif); font-weight:600; font-size:19px;}
+  .role-dates{font-size:13.5px; color:var(--slate); font-family:var(--sans); white-space:nowrap;}
+  .role-loc{font-size:14px; color:var(--slate); margin-bottom:18px; font-style:italic;}
+
+  .proj{margin-top:20px;}
+  .proj-title{font-weight:600; font-size:15.5px; margin-bottom:2px;}
+  .proj-domain{font-size:12.5px; color:var(--brass); margin-bottom:8px; font-weight:500;}
+  .proj ul{margin:0; padding-left:19px;}
+  .proj li{margin-bottom:7px; font-size:15px; color:#2B3240;}
+  .proj li::marker{color:var(--line); font-size:14px;}
+
+  details.earlier{
+    margin-top:6px;
+    border-left:2px solid var(--line);
+    padding-left:26px;
+    position:relative;
+  }
+  details.earlier::before{
+    content:'';
+    position:absolute; left:-7px; top:6px;
+    width:12px; height:12px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--line);
+  }
+  details.earlier summary{
+    cursor:pointer; font-family:var(--serif); font-weight:600; font-size:17px;
+    list-style:none; display:flex; align-items:center; gap:8px;
+  }
+  details.earlier summary::-webkit-details-marker{display:none;}
+  details.earlier summary .chevron{
+    display:inline-block; transition:transform .2s ease; font-size:14px; color:var(--slate);
+  }
+  details.earlier[open] summary .chevron{transform:rotate(90deg);}
+  details.earlier .early-role{margin-top:18px;}
+  details.earlier .early-role + .early-role{margin-top:22px;}
+
+  /* ---------- EDUCATION ---------- */
+  .edu-row{
+    display:flex; justify-content:space-between; gap:16px;
+    padding:14px 0; border-bottom:1px solid var(--line);
+    font-size:15px; flex-wrap:wrap;
+  }
+  .edu-row:last-child{border-bottom:none;}
+  .edu-name{font-weight:500;}
+  .edu-meta{color:var(--slate); font-size:13.5px; white-space:nowrap;}
+  .in-progress{color:var(--teal); font-weight:500;}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{background:var(--ink); color:var(--paper); padding:56px 0 40px;}
+  .contact-headline{font-family:var(--serif); font-size:26px; font-weight:500; margin:0 0 22px; color:#FBFAF7;}
+  .contact-list{list-style:none; margin:0 0 34px; padding:0; display:flex; flex-direction:column; gap:12px;}
+  .contact-list a{color:var(--paper); text-decoration:none; font-size:15.5px; display:flex; align-items:center; gap:10px;}
+  .contact-list a:hover{color:var(--brass-bright);}
+  .contact-list svg{width:16px; height:16px; opacity:.8;}
+  .footnote{font-size:12.5px; color:#8890A0; border-top:1px solid var(--line-on-ink); padding-top:20px;}
+
+  @media (max-width: 680px){
+    .nav-links{display:none;}
+    .metrics-row{grid-template-columns:repeat(2, 1fr); row-gap:18px;}
+    .metric{border-right:none; border-bottom:1px solid var(--line-on-ink); padding-bottom:14px;}
+    section{padding:48px 0;}
+    .hero{padding:64px 0 44px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <span class="nav-name">Ipsita Parida</span>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow-loc">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Bengaluru, India — open to Singapore</span>
+    </div>
+    <h1 class="hero-headline">Technical Product Manager for AI-driven platforms in regulated, high-scale environments.</h1>
+    <p class="hero-sub">12 years in technology — 6 in software engineering &amp; QA, 6 building <strong>internal platform products at Wells Fargo</strong>, partnering daily with backend and data engineering teams on scalable, compliant enterprise systems.</p>
+
+    <div class="metrics-row" id="metrics">
+      <div class="metric"><span class="metric-num" data-target="47">0</span><span class="metric-label">Faster patch remediation across 560,000 devices</span></div>
+      <div class="metric"><span class="metric-num" data-target="89">0</span><span class="metric-label">Fewer critical patch-lag incidents post-launch</span></div>
+      <div class="metric"><span class="metric-num" data-target="64">0</span><span class="metric-label">More high-risk patches remediated within SLA</span></div>
+      <div class="metric"><span class="metric-num" data-target="73">0</span><span class="metric-label">Faster asset check-out via AI ID verification</span></div>
+      <div class="metric"><span class="metric-num" data-target="40">0</span><span class="metric-label">Shorter delivery cycles after introducing AI tooling</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <h2 class="section-title">Summary</h2>
+    <p class="summary-text">Technical Product Manager with 12 years in technology — 6 in software development/QA and 6 leading internal platform products at Wells Fargo, partnering daily with backend and data engineering teams on scalable, compliant enterprise platforms. Owned end-to-end lifecycles for compliance, asset management, and workflow platforms across 560,000+ devices, working directly with vendors, engineering, and business stakeholders on delivery, integrations, and backlog. Introduced AI tooling into the product/engineering workflow — including an internal AI-powered Jira automation platform — cutting delivery cycle time and standardizing team processes. That engineering and QA background drives sharper scoping, earlier risk detection, and release discipline built for regulated, high-scale environments.</p>
+  </div>
+</section>
+
+<section class="alt" id="skills">
+  <div class="wrap">
+    <h2 class="section-title">Skills</h2>
+
+    <div class="skill-group">
+      <h3>Platform &amp; technical product management</h3>
+      <div class="chip-row">
+        <span class="chip">Product vision &amp; roadmap strategy</span>
+        <span class="chip">Technical requirements definition</span>
+        <span class="chip">API / system architecture partnership</span>
+        <span class="chip">Backlog prioritization</span>
+        <span class="chip">Vendor &amp; integration management</span>
+        <span class="chip">Milestone &amp; delivery tracking</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <h3>AI / ML product execution</h3>
+      <div class="chip-row">
+        <span class="chip">Introducing AI into product workflows</span>
+        <span class="chip">LLM &amp; Generative AI delivery</span>
+        <span class="chip">Prompt engineering</span>
+        <span class="chip">RAG systems</span>
+        <span class="chip">Model evaluation</span>
+        <span class="chip">Responsible AI reviews</span>
+        <span class="chip">A/B testing for model-driven features</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <h3>Delivery &amp; governance</h3>
+      <div class="chip-row">
+        <span class="chip">Agile Scrum</span>
+        <span class="chip">Sprint &amp; release planning</span>
+        <span class="chip">Risk &amp; regulatory compliance</span>
+        <span class="chip">Audit-ready documentation</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <h3>Stakeholder leadership</h3>
+      <div class="chip-row">
+        <span class="chip">Cross-regional alignment</span>
+        <span class="chip">Technical-to-business translation</span>
+        <span class="chip">Executive communication</span>
+        <span class="chip">Global team coordination</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <h3>Tools</h3>
+      <div class="chip-row">
+        <span class="chip">Jira</span><span class="chip">Confluence</span><span class="chip">Miro</span>
+        <span class="chip">Figma AI</span><span class="chip">ServiceNow</span><span class="chip">SharePoint</span>
+        <span class="chip">Power BI</span><span class="chip">Java</span><span class="chip">Selenium</span>
+        <span class="chip">ChatGPT</span><span class="chip">Claude</span><span class="chip">Gemini</span><span class="chip">Copilot</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <h2 class="section-title">Experience</h2>
+
+    <div class="role-block">
+      <div class="role-head">
+        <span class="role-title">Senior Digital Product Manager · Wells Fargo</span>
+        <span class="role-dates">Aug 2021 — Present</span>
+      </div>
+      <div class="role-loc">Bengaluru, India</div>
+
+      <div class="proj">
+        <div class="proj-title">Workplace Technology Productivity Suite — AI-Driven N-2 Compliance Platform</div>
+        <div class="proj-domain">Risk &amp; Compliance Domain</div>
+        <ul>
+          <li>Owned the end-to-end product lifecycle for a 0-to-1 platform across 560,000 devices, partnering with Engineering, Data Engineering, and Reporting — reducing average patch remediation time by 47% and cutting critical patch-lag incidents by 89%.</li>
+          <li>Built an ML-based prioritization engine that auto-triaged and ranked patches by risk and urgency, replacing manual severity assessment and increasing high-risk remediation within SLA by 64%.</li>
+          <li>Owned the PRD-to-launch cycle across Engineering, Reporting, Data Engineering, and business stakeholders, taking the product from concept to production.</li>
+        </ul>
+      </div>
+
+      <div class="proj">
+        <div class="proj-title">Story Weaver — AI-Powered Jira Solution</div>
+        <div class="proj-domain">AI Tooling for Product &amp; Engineering Delivery</div>
+        <ul>
+          <li>Introduced AI tooling directly into the product and engineering workflow: led strategy and delivery of a platform that automated backlog refinement, story quality, and acceptance-criteria generation — cutting delivery cycle time by approximately 40%.</li>
+          <li>Extended the platform with AI-assisted intake and workflow orchestration, standardizing story submission with human-in-the-loop review before publishing to Jira.</li>
+        </ul>
+      </div>
+
+      <div class="proj">
+        <div class="proj-title">Barcode Scanner Platform — Branch Asset Inventory Tracking &amp; Check-Out</div>
+        <div class="proj-domain">Banking Domain — Internal Operations</div>
+        <ul>
+          <li>Owned the platform enabling branch and office teams to scan and track IT and facilities assets, replacing manual spreadsheet-based inventory logs.</li>
+          <li>Built an AI-driven ID verification feature for asset check-out, validating employee identity against 30 business rules and auto-populating user details — cutting check-out processing time by 73%.</li>
+        </ul>
+      </div>
+
+      <div class="proj">
+        <div class="proj-title">Progressive Mobile App for The Children of India</div>
+        <div class="proj-domain">Independent — Impact Fellows India</div>
+        <ul>
+          <li>Owned the product end-to-end as sole PM — requirements, PRD, roadmap, and delivery — coordinating an NGO and engineering team with no prior working relationship.</li>
+          <li>Shipped in April 2026: cut manual data-entry effort by 70+ staff-days, lifted data completeness to 95%, and cut onboarding time by 60–80%.</li>
+        </ul>
+      </div>
+
+      <div class="proj">
+        <div class="proj-title">Media Moments — Mortgage Property Inspection Management</div>
+        <div class="proj-domain">Banking Domain</div>
+        <ul>
+          <li>Owned the platform used by bank officers for mortgage property inspections, enabling geotagged photo and video evidence capture and replacing manual, paper-based reporting — strengthening the audit and compliance evidence trail and reducing disputed inspection outcomes.</li>
+        </ul>
+      </div>
+
+      <div class="proj">
+        <div class="proj-title">MoneyTree — AI-Driven Personal Finance Platform</div>
+        <div class="proj-domain">Independent Product Case Study</div>
+        <ul>
+          <li>Defined product vision, AI value proposition, roadmap, and MVP for an AI-driven personal finance concept spanning budgeting, savings automation, and investment guidance.</li>
+          <li>Built epics, user stories, and Figma prototypes to validate AI-powered recommendation flows ahead of a build decision.</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="earlier">
+      <summary><span class="chevron">›</span> Earlier experience (2014 – 2021)</summary>
+
+      <div class="early-role">
+        <div class="role-head">
+          <span class="role-title">Senior Software Engineer · Wells Fargo</span>
+          <span class="role-dates">Jan 2020 — Aug 2021</span>
+        </div>
+        <div class="role-loc">Bengaluru, India</div>
+        <ul>
+          <li><strong>OCP Data Centre Migration:</strong> led end-to-end migration planning across Product, Release, Development, QA, UAT, and post-release validation, authoring 300+ Agile user stories with clear, testable acceptance criteria.</li>
+          <li><strong>Wells Fargo RTO App:</strong> delivered an iOS mobile and web app enabling employees to book office seating for return-to-office scheduling.</li>
+        </ul>
+      </div>
+
+      <div class="early-role">
+        <div class="role-head">
+          <span class="role-title">Senior Software QA Engineer · Wells Fargo</span>
+          <span class="role-dates">Aug 2018 — Jan 2020</span>
+        </div>
+        <div class="role-loc">Hyderabad, India</div>
+        <ul>
+          <li>Built a Selenium/Java/BDD test automation framework from scratch for 3 enterprise mobile apps, cutting manual testing effort by 40% and driving faster regression cycles.</li>
+          <li>Owned QA and UAT end-to-end, coordinating with development to define test coverage and release readiness — the quality bar I now apply as a PM.</li>
+        </ul>
+      </div>
+
+      <div class="early-role">
+        <div class="role-head">
+          <span class="role-title">Software Test Engineer · Instancy Software India Pvt Ltd</span>
+          <span class="role-dates">Feb 2016 — Aug 2018</span>
+        </div>
+        <div class="role-loc">Hyderabad, India — Learning Management Systems</div>
+        <ul>
+          <li>Wrote test cases from requirements and led testing across 5 SaaS platforms, improving system reliability by 20% through close developer collaboration on defect triage.</li>
+        </ul>
+      </div>
+
+      <div class="early-role">
+        <div class="role-head">
+          <span class="role-title">Tech Support Engineer · Tata Business Support Services</span>
+          <span class="role-dates">Sep 2014 — Feb 2016</span>
+        </div>
+        <div class="role-loc">Hyderabad, India</div>
+        <ul>
+          <li>Resolved technical issues in a high-volume support environment, building troubleshooting instincts that carried into QA and product work.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="alt" id="background">
+  <div class="wrap">
+    <h2 class="section-title">Education &amp; certifications</h2>
+    <div class="edu-row">
+      <span class="edu-name">B.Tech, Electronics and Communication Engineering — EIILM University, Sikkim, India</span>
+      <span class="edu-meta">2014</span>
+    </div>
+    <div class="edu-row">
+      <span class="edu-name">International Certificate in Product Management — Institute of Product Leadership, Bangalore</span>
+      <span class="edu-meta">Nov 2024 – May 2025</span>
+    </div>
+    <div class="edu-row">
+      <span class="edu-name">AI Product Management — HelloPM / Duke University <span class="in-progress">(in progress)</span></span>
+      <span class="edu-meta">Jul 2026 – Nov 2026</span>
+    </div>
+    <div class="edu-row">
+      <span class="edu-name">Scrum Fundamentals Certified — ScrumStudy</span>
+      <span class="edu-meta"></span>
+    </div>
+    <div class="edu-row">
+      <span class="edu-name">Microsoft AZ-900: Azure Fundamentals</span>
+      <span class="edu-meta">2024</span>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2 class="contact-headline">Let's talk</h2>
+    <ul class="contact-list">
+      <li>
+        <a href="mailto:paridaipsita777@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>paridaipsita777@gmail.com</a>
+      </li>
+      <li>
+        <a href="tel:+919100910630"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91-9100910630</a>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/ipsita-parida1/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>linkedin.com/in/ipsita-parida1</a>
+      </li>
+    </ul>
+    <p class="footnote">Bengaluru, India — open to relocation, Singapore. Currently exploring Product Management opportunities with global banking and fintech organizations, including JPMorgan, HSBC, DCB Bank, and Standard Chartered.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var nums = document.querySelectorAll('.metric-num');
+
+    function animate(el){
+      var target = parseInt(el.getAttribute('data-target'), 10);
+      if (prefersReduced){ el.textContent = target; return; }
+      var start = null;
+      var duration = 900;
+      function step(ts){
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    var triggered = false;
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting && !triggered){
+          triggered = true;
+          nums.forEach(animate);
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+
+    var metricsEl = document.getElementById('metrics');
+    if (metricsEl) observer.observe(metricsEl);
+  })();
+</script>
+
+</body>
+</html>
