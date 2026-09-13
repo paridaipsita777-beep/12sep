@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Simulator — Retrieval-Augmented Generation, Step by Step</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#11151C;
+    --paper:#F6F4EE;
+    --panel:#FFFFFF;
+    --line:#DCD6C8;
+    --brass:#B8873D;
+    --teal:#1F6F63;
+    --coral:#B5533C;
+    --slate:#5B6472;
+    --serif:'Fraunces', Georgia, serif;
+    --sans:'IBM Plex Sans', sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); line-height:1.5;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+
+  header{padding:36px 0 20px; border-bottom:1px solid var(--line);}
+  header h1{
+    font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.4vw,36px);
+    margin:0 0 8px;
+  }
+  header p{margin:0; color:var(--slate); font-size:15px; max-width:70ch;}
+
+  /* Stepper */
+  .stepper{
+    display:flex; overflow-x:auto; gap:0; margin:28px 0 0;
+    border:1px solid var(--line); border-radius:6px; background:var(--panel);
+  }
+  .step-btn{
+    flex:1; min-width:118px; padding:14px 10px; text-align:left;
+    background:none; border:none; border-right:1px solid var(--line);
+    cursor:pointer; font-family:var(--sans); position:relative;
+  }
+  .step-btn:last-child{border-right:none;}
+  .step-btn .num{
+    font-family:var(--mono); font-size:12px; color:var(--slate); display:block; margin-bottom:4px;
+  }
+  .step-btn .label{font-size:13px; font-weight:600; color:var(--ink); display:block;}
+  .step-btn.active{background:var(--ink);}
+  .step-btn.active .num{color:var(--brass);}
+  .step-btn.active .label{color:var(--paper);}
+  .step-btn.done::after{
+    content:'✓'; position:absolute; top:8px; right:10px; color:var(--teal); font-size:12px; font-weight:700;
+  }
+  .step-btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  main{padding:32px 0 80px;}
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:28px; margin-bottom:20px;
+  }
+  .panel h2{
+    font-family:var(--serif); font-weight:600; font-size:22px; margin:0 0 6px;
+  }
+  .panel .sub{color:var(--slate); font-size:14.5px; margin:0 0 22px; max-width:75ch;}
+
+  .doc-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;}
+  .doc-card{
+    border:1px solid var(--line); border-radius:6px; padding:14px; background:#FBFAF6; font-size:13.5px;
+  }
+  .doc-card .doc-title{font-weight:600; margin-bottom:6px; color:var(--ink);}
+  .doc-card .doc-text{color:var(--slate); line-height:1.5;}
+
+  .chunk-list{display:flex; flex-direction:column; gap:8px;}
+  .chunk-row{
+    display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line);
+    border-radius:6px; padding:10px 12px; background:#FBFAF6; font-size:13.5px;
+  }
+  .chunk-id{
+    font-family:var(--mono); font-size:11.5px; color:var(--brass); background:#F1E7D5;
+    padding:2px 7px; border-radius:3px; white-space:nowrap; margin-top:1px;
+  }
+  .chunk-text{color:var(--ink);}
+  .chunk-source{color:var(--slate); font-size:12px; margin-top:3px;}
+
+  .embed-layout{display:grid; grid-template-columns:1.1fr 1fr; gap:24px;}
+  @media (max-width:800px){.embed-layout{grid-template-columns:1fr;}}
+  canvas{width:100%; height:340px; border:1px solid var(--line); border-radius:6px; background:#FCFBF8; display:block;}
+  .vec-list{max-height:340px; overflow-y:auto; font-family:var(--mono); font-size:12px;}
+  .vec-row{
+    display:flex; justify-content:space-between; gap:8px; padding:7px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  .vec-row .vid{color:var(--brass);}
+  .vec-row .vval{color:var(--slate);}
+
+  .query-box{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;}
+  .query-box input{
+    flex:1; min-width:240px; padding:12px 14px; border:1px solid var(--line); border-radius:6px;
+    font-family:var(--sans); font-size:15px; background:#FBFAF6;
+  }
+  .query-box button, .action-btn{
+    padding:12px 20px; border-radius:6px; border:none; background:var(--ink); color:var(--paper);
+    font-family:var(--sans); font-weight:600; font-size:14px; cursor:pointer;
+  }
+  .action-btn.secondary{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  .query-box button:hover, .action-btn:hover{opacity:.88;}
+
+  .suggestions{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;}
+  .suggestion-chip{
+    font-size:12.5px; padding:6px 11px; border:1px solid var(--line); border-radius:999px;
+    background:#FBFAF6; cursor:pointer; color:var(--slate);
+  }
+  .suggestion-chip:hover{border-color:var(--brass); color:var(--ink);}
+
+  .rank-row{
+    display:flex; align-items:center; gap:14px; border:1px solid var(--line); border-radius:6px;
+    padding:12px 14px; margin-bottom:8px; background:#FBFAF6;
+  }
+  .rank-row.top{border-color:var(--teal); background:#EFF5F3;}
+  .rank-num{font-family:var(--mono); font-size:13px; color:var(--slate); width:22px;}
+  .rank-score{
+    font-family:var(--mono); font-size:13px; color:var(--teal); font-weight:600; width:64px;
+  }
+  .rank-text{flex:1; font-size:13.5px;}
+  .rank-bar-bg{width:90px; height:6px; background:var(--line); border-radius:3px; overflow:hidden;}
+  .rank-bar-fill{height:100%; background:var(--teal);}
+
+  .prompt-box{
+    font-family:var(--mono); font-size:13px; background:var(--ink); color:#E8E4D8;
+    border-radius:6px; padding:18px; line-height:1.7; white-space:pre-wrap; overflow-x:auto;
+  }
+  .prompt-box .tag{color:var(--brass);}
+  .prompt-box .ctx{color:#9FD3C7;}
+  .prompt-box .q{color:#F0C48A;}
+
+  .answer-box{
+    border:1px solid var(--teal); background:#EFF5F3; border-radius:6px; padding:20px; font-size:15px;
+  }
+  .answer-box .cite{
+    font-family:var(--mono); font-size:11.5px; color:var(--teal); background:#DCEDE8;
+    padding:1px 6px; border-radius:3px; margin-left:3px;
+  }
+  .disclaimer{font-size:12px; color:var(--slate); margin-top:14px; font-style:italic;}
+
+  .nav-row{display:flex; justify-content:space-between; margin-top:8px;}
+
+  .info-box{
+    border-left:3px solid var(--brass); background:#FBF5EA; padding:12px 16px; font-size:13.5px;
+    color:#4A3E27; border-radius:0 6px 6px 0; margin-bottom:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>RAG Simulator</h1>
+    <p>Retrieval-Augmented Generation, one stage at a time. Type a question, watch it get embedded, matched against a small knowledge base, and assembled into a grounded prompt — all computed live in your browser, no external API calls.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stepper" id="stepper"></div>
+</div>
+
+<main class="wrap">
+  <div id="panels"></div>
+  <div class="nav-row">
+    <button class="action-btn secondary" id="prevBtn">← Back</button>
+    <button class="action-btn" id="nextBtn">Continue →</button>
+  </div>
+</main>
+
+<script>
+(function(){
+
+  // ---------- Tiny knowledge base ----------
+  const DOCS = [
+    { id:'D1', title:'Onboarding Policy', text:'New employees must complete identity verification within 3 business days of their start date. Verification requires a government-issued ID and a manager approval step logged in the HR system.' },
+    { id:'D2', title:'Access Control Guide', text:'Role-based access grants are reviewed quarterly. Any access request outside a standard role template requires a documented business justification and sign-off from the data owner.' },
+    { id:'D3', title:'Incident Response Runbook', text:'Critical incidents must be triaged within 15 minutes of detection. The on-call engineer escalates to the incident commander if the issue is not contained within 30 minutes.' },
+    { id:'D4', title:'Data Retention Policy', text:'Customer transaction records are retained for 7 years to meet regulatory requirements. Logs unrelated to compliance are purged after 90 days unless flagged for an active investigation.' },
+    { id:'D5', title:'Vendor Risk Standard', text:'Third-party vendors handling regulated data must pass an annual security assessment. High-risk vendors require a compensating control plan reviewed by the risk committee.' }
+  ];
+
+  const SUGGESTIONS = [
+    'How long are transaction records kept?',
+    'What happens during a critical incident?',
+    'How often is access reviewed?'
+  ];
+
+  // ---------- Deterministic pseudo-embedding (for teaching, not a real model) ----------
+  const DIM = 24;
+  function hashStr(s){
+    let h = 2166136261;
+    for (let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function embed(text){
+    const v = new Array(DIM).fill(0);
+    const clean = text.toLowerCase().replace(/[^a-z0-9 ]/g,' ');
+    const words = clean.split(/\s+/).filter(Boolean);
+    words.forEach(w=>{
+      for (let n=3; n<=4; n++){
+        for (let i=0; i+n<=w.length; i++){
+          const gram = w.slice(i,i+n);
+          const h = hashStr(gram);
+          v[h % DIM] += ((h >> 3) % 2 === 0 ? 1 : -1);
+        }
+      }
+    });
+    const mag = Math.sqrt(v.reduce((a,b)=>a+b*b,0)) || 1;
+    return v.map(x=>x/mag);
+  }
+  function cosine(a,b){
+    let dot=0; for(let i=0;i<a.length;i++) dot += a[i]*b[i];
+    return dot;
+  }
+  const PROJ = (()=>{
+    let seed = 42;
+    function rnd(){ seed = (seed*1103515245+12345) & 0x7fffffff; return (seed/0x7fffffff)*2-1; }
+    const px=[], py=[];
+    for(let i=0;i<DIM;i++){ px.push(rnd()); py.push(rnd()); }
+    return {px,py};
+  })();
+  function project(v){
+    let x=0,y=0;
+    for(let i=0;i<v.length;i++){ x+=v[i]*PROJ.px[i]; y+=v[i]*PROJ.py[i]; }
+    return {x,y};
+  }
+
+  // ---------- Chunking ----------
+  function chunkDoc(doc){
+    const sentences = doc.text.match(/[^.]+\./g).map(s=>s.trim());
+    return sentences.map((s,i)=>({ id: doc.id+'-c'+(i+1), source: doc.title, text: s }));
+  }
+  const ALL_CHUNKS = DOCS.flatMap(chunkDoc);
+
+  // ---------- State ----------
+  let state = {
+    step: 0,
+    chunks: null,
+    embeddings: null,
+    query: '',
+    queryVec: null,
+    ranked: null,
+    topK: 3
+  };
+
+  const STEPS = [
+    { key:'ingest', label:'Ingest Documents' },
+    { key:'chunk', label:'Chunk Text' },
+    { key:'embed', label:'Embed Chunks' },
+    { key:'index', label:'Vector Index' },
+    { key:'query', label:'Ask a Question' },
+    { key:'retrieve', label:'Retrieve Top-K' },
+    { key:'augment', label:'Augment Prompt' },
+    { key:'generate', label:'Generate Answer' },
+  ];
+
+  const stepperEl = document.getElementById('stepper');
+  const panelsEl = document.getElementById('panels');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function renderStepper(){
+    stepperEl.innerHTML = STEPS.map((s,i)=>{
+      const cls = ['step-btn'];
+      if (i===state.step) cls.push('active');
+      if (i<state.step) cls.push('done');
+      const disabled = i > state.step ? 'disabled' : '';
+      return '<button class="'+cls.join(' ')+'" data-i="'+i+'" '+disabled+'>'+
+        '<span class="num">STEP '+(i+1)+'</span><span class="label">'+s.label+'</span>'+
+        '</button>';
+    }).join('');
+    stepperEl.querySelectorAll('.step-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.dataset.i,10);
+        if (i<=state.step){ state.step=i; render(); }
+      });
+    });
+  }
+
+  function panelWrap(title, sub, bodyHtml){
+    return '<div class="panel"><h2>'+title+'</h2><p class="sub">'+sub+'</p>'+bodyHtml+'</div>';
+  }
+
+  function renderPanel(){
+    const key = STEPS[state.step].key;
+    let html = '';
+
+    if (key==='ingest'){
+      html = panelWrap('1 · Ingest Documents',
+        "A RAG system starts with a knowledge base — documents the model doesn't already know, or that need to stay current without retraining. Here's our small sample corpus.",
+        '<div class="doc-grid">'+DOCS.map(d=>
+          '<div class="doc-card"><div class="doc-title">'+d.title+'</div><div class="doc-text">'+d.text+'</div></div>'
+        ).join('')+'</div>');
+    }
+
+    else if (key==='chunk'){
+      state.chunks = ALL_CHUNKS;
+      html = panelWrap('2 · Chunk Text',
+        "Full documents are usually too long to embed and retrieve precisely, so they're split into smaller chunks — here, by sentence. Smaller chunks give more precise retrieval; larger chunks preserve more context. This is a real trade-off in production RAG systems.",
+        '<div class="chunk-list">'+state.chunks.map(c=>
+          '<div class="chunk-row"><span class="chunk-id">'+c.id+'</span>'+
+          '<div><div class="chunk-text">'+c.text+'</div><div class="chunk-source">from '+c.source+'</div></div></div>'
+        ).join('')+'</div>');
+    }
+
+    else if (key==='embed'){
+      if (!state.embeddings){
+        state.embeddings = state.chunks.map(c=>Object.assign({}, c, { vec: embed(c.text) }));
+      }
+      html = panelWrap('3 · Embed Each Chunk',
+        'Each chunk is converted into a vector — a list of numbers capturing its meaning, positioned so similar meanings sit close together in vector space. (This simulator uses a simplified hash-based embedding for teaching purposes, not a real trained model — the concept is identical to production embedding models.)',
+        '<div class="embed-layout"><canvas id="embedCanvas"></canvas><div class="vec-list">'+
+          state.embeddings.map(e=>
+            '<div class="vec-row"><span class="vid">'+e.id+'</span><span class="vval">['+e.vec.slice(0,4).map(n=>n.toFixed(2)).join(', ')+', …]</span></div>'
+          ).join('')+'</div></div>');
+    }
+
+    else if (key==='index'){
+      html = panelWrap('4 · Store in a Vector Index',
+        'All chunk vectors are stored in a vector index (in production: something like FAISS, Pinecone, or pgvector) that supports fast nearest-neighbor search — finding the closest vectors to any new query, without comparing against every document from scratch every time.',
+        '<div class="info-box">'+state.embeddings.length+' chunk vectors indexed and ready for similarity search, each '+DIM+' dimensions.</div><canvas id="indexCanvas"></canvas>');
+    }
+
+    else if (key==='query'){
+      html = panelWrap('5 · Ask a Question',
+        'Now the user asks something. The question will go through the exact same embedding process as the chunks did — that shared vector space is what makes matching possible.',
+        '<div class="suggestions">'+SUGGESTIONS.map(s=>'<span class="suggestion-chip" data-q="'+s+'">'+s+'</span>').join('')+'</div>'+
+        '<div class="query-box"><input id="queryInput" type="text" placeholder="Type a question about the policies above…" value="'+state.query+'"></div>');
+    }
+
+    else if (key==='retrieve'){
+      if (!state.ranked){
+        state.queryVec = embed(state.query || SUGGESTIONS[0]);
+        state.ranked = state.embeddings
+          .map(e=>Object.assign({}, e, { score: cosine(state.queryVec, e.vec) }))
+          .sort((a,b)=>b.score-a.score);
+      }
+      const maxScore = state.ranked[0].score || 1;
+      html = panelWrap('6 · Retrieve Top-K by Similarity',
+        'Query: "<strong>'+(state.query || SUGGESTIONS[0])+'</strong>" is compared against every chunk vector using cosine similarity. The top '+state.topK+' highest-scoring chunks are pulled as context — everything else is discarded for this answer.',
+        '<div>'+state.ranked.map((r,i)=>
+          '<div class="rank-row '+(i<state.topK ? 'top':'')+'">'+
+          '<span class="rank-num">#'+(i+1)+'</span>'+
+          '<span class="rank-score">'+r.score.toFixed(3)+'</span>'+
+          '<div class="rank-bar-bg"><div class="rank-bar-fill" style="width:'+Math.max(0,(r.score/maxScore)*100)+'%"></div></div>'+
+          '<span class="rank-text">'+r.text+' <span class="chunk-source">('+r.source+')</span></span></div>'
+        ).join('')+'</div>');
+    }
+
+    else if (key==='augment'){
+      const top = state.ranked.slice(0, state.topK);
+      const contextBlock = top.map((r,i)=>'['+(i+1)+'] '+r.text).join('\n');
+      html = panelWrap('7 · Augment the Prompt',
+        'The retrieved chunks are inserted directly into the prompt sent to the language model, alongside the original question. This is the "augmented" part of Retrieval-Augmented Generation — the model answers using this grounded context instead of relying only on what it memorized during training.',
+        '<div class="prompt-box"><span class="tag">SYSTEM:</span> Answer only using the context below. Cite sources by number.\n\n<span class="tag">CONTEXT:</span>\n<span class="ctx">'+contextBlock+'</span>\n\n<span class="tag">QUESTION:</span> <span class="q">'+(state.query || SUGGESTIONS[0])+'</span></div>');
+    }
+
+    else if (key==='generate'){
+      const top = state.ranked.slice(0, state.topK);
+      const answer = buildAnswer(state.query || SUGGESTIONS[0], top);
+      html = panelWrap('8 · Generate the Answer',
+        'The language model reads the augmented prompt and produces an answer grounded in the retrieved chunks, citing which ones it used. (This simulator assembles the answer with a simple template so it stays fully offline — a real system would send this exact prompt to an LLM.)',
+        '<div class="answer-box">'+answer+'</div><p class="disclaimer">Simulated generation — no external model was called. In production, this prompt would go to an LLM API, which would generate the phrasing itself.</p>');
+    }
+
+    panelsEl.innerHTML = html;
+
+    if (key==='embed') drawScatter('embedCanvas', state.embeddings);
+    if (key==='index') drawScatter('indexCanvas', state.embeddings);
+
+    if (key==='query'){
+      const input = document.getElementById('queryInput');
+      input.addEventListener('input', e=>{ state.query = e.target.value; });
+      panelsEl.querySelectorAll('.suggestion-chip').forEach(chip=>{
+        chip.addEventListener('click', ()=>{
+          state.query = chip.dataset.q;
+          input.value = state.query;
+        });
+      });
+    }
+
+    prevBtn.style.visibility = state.step===0 ? 'hidden' : 'visible';
+    nextBtn.textContent = state.step===STEPS.length-1 ? 'Start Over' : 'Continue →';
+  }
+
+  function buildAnswer(query, topChunks){
+    const parts = topChunks.map((c,i)=>c.text.replace(/\.$/,'')+' <span class="cite">['+(i+1)+']</span>');
+    return 'Based on the retrieved policy sections: '+parts.join(' ');
+  }
+
+  function drawScatter(canvasId, points){
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width*dpr; canvas.height = 340*dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    const W = rect.width, H = 340;
+    ctx.clearRect(0,0,W,H);
+
+    const projected = points.map(p=>Object.assign({}, p, project(p.vec)));
+    const xs = projected.map(p=>p.x), ys = projected.map(p=>p.y);
+    const minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+    const minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+    const pad = 40;
+    function sx(x){ return pad + (x-minX)/((maxX-minX)||1) * (W-2*pad); }
+    function sy(y){ return H-pad - (y-minY)/((maxY-minY)||1) * (H-2*pad); }
+
+    const colors = {};
+    const palette = ['#B8873D','#1F6F63','#B5533C','#6B5CA5','#3E7CB1'];
+    DOCS.forEach((d,i)=>{ colors[d.title]=palette[i%palette.length]; });
+
+    projected.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(sx(p.x), sy(p.y), 6, 0, Math.PI*2);
+      ctx.fillStyle = colors[p.source] || '#999';
+      ctx.fill();
+    });
+
+    ctx.font = '11px IBM Plex Mono, monospace';
+    let ly = 18;
+    DOCS.forEach(d=>{
+      ctx.fillStyle = colors[d.title];
+      ctx.fillRect(W-160, ly-9, 8, 8);
+      ctx.fillStyle = '#5B6472';
+      ctx.fillText(d.title, W-146, ly);
+      ly += 16;
+    });
+  }
+
+  function render(){
+    renderStepper();
+    renderPanel();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  nextBtn.addEventListener('click', ()=>{
+    if (state.step === STEPS.length-1){
+      state = { step:0, chunks:null, embeddings:null, query:'', queryVec:null, ranked:null, topK:3 };
+      render();
+      return;
+    }
+    if (STEPS[state.step].key==='query' && !state.query){
+      state.query = SUGGESTIONS[0];
+    }
+    if (STEPS[state.step].key==='query'){ state.ranked = null; }
+    state.step++;
+    render();
+  });
+  prevBtn.addEventListener('click', ()=>{
+    if (state.step>0){ state.step--; render(); }
+  });
+
+  window.addEventListener('resize', ()=>{
+    const key = STEPS[state.step].key;
+    if (key==='embed') drawScatter('embedCanvas', state.embeddings);
+    if (key==='index') drawScatter('indexCanvas', state.embeddings);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
